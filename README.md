@@ -1,74 +1,84 @@
-Projeto Casa inteligente com ESP8266
+Descrição do Projeto
 
-O que o sketch faz
+Sistema simples de automação residencial utilizando ESP8266, permitindo controle de bomba, fumaça e luzes através de uma interface web embutida.
+O próprio ESP cria um ponto de acesso Wi-Fi para que qualquer dispositivo possa se conectar e controlar o sistema.
 
-Cria ponto de acesso Wi‑Fi e servidor web no ESP8266.
+Recursos Implementados
 
-Controla três saídas:
+Criação de Access Point (AP) Wi-Fi diretamente no ESP8266.
 
-Bomba com 5 níveis PWM.
+Servidor web embarcado para controle das saídas.
 
-Saída de fumaça digital.
+Ajuste de potência da bomba via PWM com 5 níveis.
 
-Saída de luzes digital.
+Controle digital de fumaça e luzes.
 
-Interface web embutida para ajustar nível da bomba e ligar/desligar fumaça e luzes.
+Página HTML completa armazenada em PROGMEM com JavaScript e fetch API.
 
-Pinos usados
+Rotas próprias para cada controle (/pump, /smoke, /lights).
+
+Pinos Utilizados
 const int PUMP_PIN   = 4;  // D2
 const int SMOKE_PIN  = 5;  // D1
 const int LIGHTS_PIN = 0;  // D3
 
 
-Usa GPIOs diretamente, conforme a referência do core ESP8266 para Arduino, que mapeia números de pino Arduino para GPIOs. 
-esp8266.github.io
+O código utiliza a referência oficial de mapeamento do core ESP8266 para Arduino.
+Documentação: esp8266.github.io
 
-Como usar rapidamente
+Como Usar
 
 Carregue o sketch no ESP8266.
 
-Conecte as cargas aos pinos definidos, usando driver adequado se necessário.
+Conecte bomba, módulo de fumaça e luzes aos pinos indicados (com driver se necessário).
 
-No monitor serial, verifique o IP do ponto de acesso gerado.
+Abra o monitor serial e copie o IP gerado pelo ponto de acesso.
 
-Conecte um dispositivo ao Wi‑Fi com SSID e senha definidos.
+Conecte-se ao Wi-Fi criado pelo ESP.
 
-Acesse o IP pelo navegador para ver a página de controle.
+Acesse o IP no navegador do celular ou PC.
 
-Resumo da estrutura do código
+Utilize a interface para:
 
-Variáveis principais: níveis PWM no array PWM_LEVELS[], estado atual da bomba e das saídas digitais.
+Definir nível da bomba
 
-HTML: página inteira em PROGMEM inclui estilo e script; usa fetch para /pump, /smoke, /lights.
+Ligar/desligar fumaça
 
-Handlers:
+Ligar/desligar luzes
 
-/ serve a página.
+Resumo da Estrutura do Código
 
-/pump recebe level, ajusta analogWrite() com valor do array.
+Variáveis principais: níveis de PWM, estados digitais e armazenamento do nível atual.
 
-/smoke e /lights recebem state e atualizam a saída digital.
+Página HTML: inserida em PROGMEM com CSS e JavaScript.
 
-Setup: configura pinos, inicía AP, define rotas e inicia o servidor.
+Rotas:
 
-Loop: chama server.handleClient() para responder requisições.
+/ → página de controle
 
-Nota rápida sobre PWM
+/pump?level=X → ajusta PWM
 
-O ESP8266 permite PWM em pinos 0–16; valor padrão de alcance é 1023, frequência padrão 1 kHz; pode ser alterada por analogWriteRange() e analogWriteFreq(). 
-esp8266.github.io
+/lights?state=1 → liga/desliga luz
 
-No sketch, os níveis usados são 0, 100, 120, 140, 160. Você pode ajustar para qualquer esquema desejado.
+/smoke?state=1 → liga/desliga fumaça
 
-Pontos de atenção
+Setup: configura pinos, inicia AP, define rotas e inicia servidor.
 
-Verifique compatibilidade dos pinos usados e necessidade de driver para cargas.
+Loop: server.handleClient() processa as requisições.
 
-Alimentação adequada e proteção contra picos ou sobrecorrente.
+Nota sobre PWM no ESP8266
 
-A interface não reflete estado real após reset; se desejar, implemente endpoint de status e leitura inicial ao carregar a página.
+PWM disponível nos pinos 0–16
 
-Para páginas maiores, considere armazenar em SPIFFS/LittleFS em vez de somente PROGMEM.
+Alcance padrão: 0–1023
+
+Frequência padrão: 1 kHz
+
+Ajustável com analogWriteRange() e analogWriteFreq()
+
+Níveis usados no projeto:
+0, 100, 120, 140, 160
+(podendo ser alterados livremente)
 
 https://github.com/user-attachments/assets/09024504-e4ec-4642-b7fc-829a5894c2d6
 
